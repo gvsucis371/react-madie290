@@ -1,42 +1,36 @@
 /* index.css */
-
-/* Reset some default browser styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    .container {
     padding: 20px;
   }
-  
-  /* Basic styling for the root element */
-  #root {
-    text-align: center;
+
+  .form-section {
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+
+  input, button {
+    display: block;
+    margin-bottom: 10px;
+    padding: 8px;
   }
   
-  /* Simple styling for the button */
-  button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
+  table-section {
+    padding: 20px;
+    border-radius: 10px;
   }
   
-  button:hover {
-    background-color: #0056b3;
+  table {
+    width: 100%;
+    border-collapse: collapse;
   }
+
   
-  /* Basic styling for the items */
-  .item {
-    background-color: white;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 10px 0;
-  }
-  
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+th {
+  background-color: #f0f0f0;
+}
