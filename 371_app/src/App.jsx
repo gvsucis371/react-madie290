@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './styles/index.css';  // Ensure your styles are included
 
 function App() {
@@ -7,15 +7,36 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [editingId, setEditingId] = useState(null);
 
-  // Add a new prompt
-  const addPrompt = () => {
-    if (!category || !prompt) return;
-    const newPrompt = { id: Date.now(), category, prompt };
-    setPrompts([...prompts, newPrompt]);
-    clearForm();
+  // Fetch prompts from API
+  const fetchPrompts = async () => {
+    const response = await fetch('http://localhost:5000/prompts');
+    const data = await response.json();
+    setPrompts(data);
   };
-   // Start editing
-   const startEditing = (id) => {
+
+  useEffect(() => {
+    fetchPrompts();
+  }, []);
+
+  // Add a new prompt
+  const addPrompt = async () => {
+    if (!category || !prompt) return;
+    const newPrompt = { category, prompt };
+
+    const response = await fetch('http://localhost:5000/prompts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newPrompt),
+    });
+
+    if (response.ok) {
+      fetchPrompts();
+      clearForm();
+    }
+  };
+
+  // Start editing
+  const startEditing = (id) => {
     const promptToEdit = prompts.find((p) => p.id === id);
     setCategory(promptToEdit.category);
     setPrompt(promptToEdit.prompt);
@@ -23,17 +44,36 @@ function App() {
   };
 
   // Save edit
-  const saveEdit = () => {
-    setPrompts(prompts.map((p) =>
-      p.id === editingId ? { ...p, category, prompt } : p
-    ));
-    setEditingId(null);
-    clearForm();
+  const saveEdit = async () => {
+    const updatedPrompt = { category, prompt };
+
+    const response = await fetch(`http://localhost:5000/prompts/${editingId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedPrompt),
+    });
+
+    if (response.ok) {
+      fetchPrompts();
+      setEditingId(null);
+      clearForm();
+    }
   };
 
   // Delete prompt
-  const deletePrompt = (id) => {
-    setPrompts(prompts.filter((p) => p.id !== id));
+  const deletePrompt = async (id) => {
+    if (id === editingId) {
+      // Prevent deletion if editing this prompt
+      alert("Cannot delete the prompt while editing.");
+      return;
+    }
+    const response = await fetch(`http://localhost:5000/prompts/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      fetchPrompts();
+    }
   };
 
   // Clear input fields
@@ -99,5 +139,5 @@ function App() {
     </div>
   );
 }
-export default App;
 
+export default App;
